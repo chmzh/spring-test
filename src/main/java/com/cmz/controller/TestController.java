@@ -13,7 +13,6 @@ public class TestController {
 	@Autowired
 	TestService testService;
 	
-	@PostConstruct
 	public void init(){
 		System.out.println("TestController init");
 	}

@@ -1,6 +1,7 @@
 package com.cmz.bean.post;
 
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.cmz.controller.TestController;
 
