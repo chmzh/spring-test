@@ -1,14 +1,28 @@
 package com.cmz.bean.aop;
 
+import java.util.Objects;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.DeclareParents;
 import org.aspectj.lang.annotation.Pointcut;
+
+import com.cmz.bean.aop.service.IUsageTracked;
 
 @Aspect
 public class SystemArchitecture {
+	/**
+	 * 统计使用次数
+	 */
+	@DeclareParents(value="com.cmz.controller.*+",defaultImpl=com.cmz.bean.aop.service.DefaultUsageTracked.class)
+	private static IUsageTracked tracked;
+	
 	/**
 	 * A join point is in the web layer if the method is defined in a type in
 	 * the com.xyz.someapp.web package or any sub-package under that.
@@ -17,7 +31,6 @@ public class SystemArchitecture {
 	public void inWebLayer() {
 	}
 
-	
 	/**
 	 * A join point is in the service layer if the method is defined in a type
 	 * in the com.xyz.someapp.service package or any sub-package under that.
@@ -26,25 +39,50 @@ public class SystemArchitecture {
 	public void inServiceLayer() {
 	}
 
-	//advice
-	@Before("inServiceLayer()")
-	public void doBefore(){
-		System.out.println("before");
-	}
+	// advice
+//	@Before("inServiceLayer() && args(name,..)")
+//	public void doBefore(String name) {
+//		System.out.println("before:"+name);
+//	}
 	
+	@Before("inServiceLayer() && args(name,..) && this(tracked)")
+	public void doBefore(JoinPoint jp,String name,IUsageTracked tracked) {
+		StringBuilder args = new StringBuilder();		
+		Object[] objects = jp.getArgs();
+		if(Objects.nonNull(objects)){
+			for(Object object : objects){
+				args.append(object.toString());
+				args.append(",");
+			}
+		}
+		
+		tracked.increateUseCount(jp.getTarget().getClass().getName(),jp.getSignature().getName(),args.toString());
+		System.out.println("before:"+name);
+	}
+
 	@After("inServiceLayer()")
-	public void doAfter(){
+	public void doAfter() {
 		System.out.println("after");
 	}
+
 	@AfterReturning("inServiceLayer()")
-	public void doAfterReturn(){
+	public void doAfterReturn() {
 		System.out.println("after return");
 	}
-	@AfterThrowing(pointcut="inServiceLayer()",throwing="ex")
-	public void doAfterThrow(Throwable ex){
+
+	@AfterThrowing(pointcut = "inServiceLayer()", throwing = "ex")
+	public void doAfterThrow(Throwable ex) {
 		ex.printStackTrace();
 	}
-	
+/*
+	@Around("inServiceLayer()")
+	public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable {
+		// start stopwatch
+		Object retVal = pjp.proceed();
+		// stop stopwatch
+		return retVal;
+	}
+*/
 	/**
 	 * A join point is in the data access layer if the method is defined in a
 	 * type in the com.xyz.someapp.dao package or any sub-package under that.

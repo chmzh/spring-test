@@ -23,8 +23,9 @@ public class TestController {
 		testService.println(msg);
 	}
 
-	public void execute(String msg) throws IOException{
-		testService.println(msg);
-		throw new IOException("test");
+	public String execute(String msg) throws IOException{
+		System.out.println(msg);
+		return "msg";
+		//throw new IOException("test");
 	}
 }
