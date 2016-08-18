@@ -17,7 +17,7 @@
         default-init-method="init"
         >
 
-
+	<aop:aspectj-autoproxy/>
 	<context:component-scan base-package="com.cmz.controller" >
 	<context:include-filter type="annotation" expression="com.cmz.base.Controller"/>
 	</context:component-scan>
@@ -29,4 +29,6 @@
 	<bean class="com.cmz.bean.post.InstantiationTracingBeanPostProcessor"></bean>
 	
 	<context:property-override location="classpath:override.properties"/>
+	
+	 <bean class="com.cmz.bean.aop.SystemArchitecture"></bean>
 </beans>

@@ -1,5 +1,7 @@
 package com.cmz.controller;
 
+import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,4 +23,8 @@ public class TestController {
 		testService.println(msg);
 	}
 
+	public void execute(String msg) throws IOException{
+		testService.println(msg);
+		throw new IOException("test");
+	}
 }
