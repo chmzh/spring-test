@@ -15,6 +15,6 @@ public interface UserDao {
 	@Insert("INSERT INTO "+Table+"("+fields+") VALUES(0,#{user.uname},#{user.pwd},#{user.enabled},#{user.qq})")
 	public int addUser(@Param("user")User user);
 	
-	@Delete("DELETE FROM "+Table+" WHERE id=#{id}")
+	@Delete("DELETE FROM "+Table+" WHERE id1=#{id}")
 	public int delUser(@Param("id")int id);
 }
